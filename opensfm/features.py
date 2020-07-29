@@ -8,7 +8,7 @@ import cv2
 
 from opensfm import context
 from opensfm import csfm
-from sift_gpu import SiftGpu
+from opensfm.sift_gpu import SiftGpu
 
 logger = logging.getLogger(__name__)
 
