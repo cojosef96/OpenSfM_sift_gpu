@@ -501,14 +501,8 @@ def get_image_metadata(data, image):
     if ('gps' in exif and
             'latitude' in exif['gps'] and
             'longitude' in exif['gps']):
-        lat = exif['gps']['latitude']
-        lon = exif['gps']['longitude']
-        if data.config['use_altitude_tag']:
-            alt = exif['gps'].get('altitude', 2.0)
-        else:
-            alt = 2.0  # Arbitrary value used to align the reconstruction
-        x, y, z = reference.to_topocentric(lat, lon, alt)
-        metadata.gps_position = [x, y, z]
+        gps = exif["gps"]
+        metadata.gps_position = [gps["latitude"], gps["longitude"], gps["altitude"]]
         metadata.gps_dop = exif['gps'].get('dop', 15.0)
     else:
         metadata.gps_position = [0.0, 0.0, 0.0]
@@ -1128,12 +1122,12 @@ def remove_outliers(graph, reconstruction, config, points=None):
 def shot_lla_and_compass(shot, reference):
     """Lat, lon, alt and compass of the reconstructed shot position."""
     topo = shot.pose.get_origin()
-    lat, lon, alt = reference.to_lla(*topo)
+    # lat, lon, alt = reference.to_lla(*topo)
 
     dz = shot.viewing_direction()
     angle = np.rad2deg(np.arctan2(dz[0], dz[1]))
     angle = (angle + 360) % 360
-    return lat, lon, alt, angle
+    return topo[0], topo[1], topo[2], angle
 
 
 def align_two_reconstruction(r1, r2, common_tracks, threshold):

@@ -41,8 +41,7 @@ def match_candidates_by_distance(images_ref, images_cand, exifs, reference,
     points = np.zeros((len(images_cand), 3))
     for i, image in enumerate(images_cand):
         gps = exifs[image]['gps']
-        points[i] = reference.to_topocentric(
-            gps['latitude'], gps['longitude'], 0)
+        points[i] = (gps["latitude"], gps["longitude"], gps["altitude"])
 
     tree = spatial.cKDTree(points)
 
@@ -51,8 +50,7 @@ def match_candidates_by_distance(images_ref, images_cand, exifs, reference,
         nn = k+1 if image_ref in images_cand else k
 
         gps = exifs[image_ref]['gps']
-        point = reference.to_topocentric(
-            gps['latitude'], gps['longitude'], 0)
+        point = (gps['latitude'], gps['longitude'], gps["altitude"])
         distances, neighbors = tree.query(
             point, k=nn, distance_upper_bound=max_distance)
 
